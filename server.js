@@ -93,8 +93,90 @@ async function initDatabase() {
     }
 }
 
+async function migrateTables() {
+    try {
+        // Check if results table has old schema and migrate
+        const [resultsColumns] = await db.execute(`
+            SELECT COLUMN_NAME 
+            FROM INFORMATION_SCHEMA.COLUMNS 
+            WHERE TABLE_NAME = 'results' 
+            AND TABLE_SCHEMA = DATABASE()
+        `);
+        
+        const columnNames = resultsColumns.map(col => col.COLUMN_NAME);
+        
+        if (columnNames.includes('image_path') && !columnNames.includes('image_data')) {
+            console.log('Migrating results table to new schema...');
+            
+            // Create new table with new schema
+            await db.execute(`
+                CREATE TABLE results_new (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    category VARCHAR(50) NOT NULL,
+                    year VARCHAR(10) NOT NULL,
+                    image_data LONGBLOB NOT NULL,
+                    image_filename VARCHAR(255) NOT NULL,
+                    image_mimetype VARCHAR(100) NOT NULL,
+                    description TEXT,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                    UNIQUE KEY unique_category_year (category, year)
+                )
+            `);
+            
+            // Drop old table and rename new one
+            await db.execute('DROP TABLE results');
+            await db.execute('RENAME TABLE results_new TO results');
+            
+            console.log('Results table migrated successfully');
+        }
+        
+        // Check if documents table has old schema and migrate
+        const [documentsColumns] = await db.execute(`
+            SELECT COLUMN_NAME 
+            FROM INFORMATION_SCHEMA.COLUMNS 
+            WHERE TABLE_NAME = 'documents' 
+            AND TABLE_SCHEMA = DATABASE()
+        `);
+        
+        const docColumnNames = documentsColumns.map(col => col.COLUMN_NAME);
+        
+        if (docColumnNames.includes('file_path') && !docColumnNames.includes('file_data')) {
+            console.log('Migrating documents table to new schema...');
+            
+            // Create new table with new schema
+            await db.execute(`
+                CREATE TABLE documents_new (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    title VARCHAR(255) NOT NULL,
+                    category VARCHAR(50) NOT NULL,
+                    file_data LONGBLOB NOT NULL,
+                    file_filename VARCHAR(255) NOT NULL,
+                    file_mimetype VARCHAR(100) NOT NULL,
+                    description TEXT,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                )
+            `);
+            
+            // Drop old table and rename new one
+            await db.execute('DROP TABLE documents');
+            await db.execute('RENAME TABLE documents_new TO documents');
+            
+            console.log('Documents table migrated successfully');
+        }
+        
+    } catch (error) {
+        console.error('Migration error:', error);
+        // Don't throw error - let the app continue with new tables
+    }
+}
+
 async function initializeTables() {
     try {
+        // Check if tables exist and migrate if needed
+        await migrateTables();
+        
         // Create results table
         await db.execute(`
             CREATE TABLE IF NOT EXISTS results (
@@ -253,8 +335,8 @@ app.get('/api/results', async (req, res) => {
         const [rows] = await db.execute('SELECT id, category, year, image_filename, image_mimetype, description, created_at, updated_at FROM results ORDER BY year DESC, category');
         res.json(rows);
     } catch (error) {
-        console.error('Database error:', error);
-        res.status(500).json({ error: 'Database error' });
+        console.error('Database error in GET /api/results:', error);
+        res.status(500).json({ error: 'Database error', details: error.message });
     }
 });
 
@@ -416,8 +498,8 @@ app.get('/api/documents', async (req, res) => {
         const [rows] = await db.execute('SELECT id, title, category, file_filename, file_mimetype, description, created_at, updated_at FROM documents ORDER BY created_at DESC');
         res.json(rows);
     } catch (error) {
-        console.error('Database error:', error);
-        res.status(500).json({ error: 'Database error' });
+        console.error('Database error in GET /api/documents:', error);
+        res.status(500).json({ error: 'Database error', details: error.message });
     }
 });
 

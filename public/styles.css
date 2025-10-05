@@ -733,6 +733,18 @@ body {
     margin: 0 auto;
 }
 
+.results-header {
+    text-align: left;
+    margin-bottom: 3rem;
+}
+
+.results-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #2061a6;
+    margin: 0;
+}
+
 .results-categories {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -1021,6 +1033,11 @@ body {
     .modal-content {
         width: 95%;
         margin: 5% auto;
+    }
+
+    /* Results Header Mobile */
+    .results-header h1 {
+        font-size: 2rem;
     }
 }
 

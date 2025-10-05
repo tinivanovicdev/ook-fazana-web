@@ -197,33 +197,19 @@ function setupViewButtonHandlers() {
 // View image in modal
 async function viewImage(category, year) {
     try {
-        // Try to get result from API first
-        let result;
-        try {
-            const response = await fetch(`/api/results/${category}/${year}`);
-            if (response.ok) {
-                const apiResult = await response.json();
-                // Remove 'public/' prefix from image path since static files are served from public folder
-                const imagePath = apiResult.image_path.replace(/^public\//, '');
-                result = {
-                    title: getCategoryName(apiResult.category),
-                    image: `/${imagePath}`,
-                    description: apiResult.description
-                };
-            }
-        } catch (apiError) {
-            console.warn('API call failed, using static data:', apiError);
+        // Get the image element to use its current data
+        const imageElement = document.querySelector(`[data-category="${category}"]`);
+        if (!imageElement) {
+            throw new Error('Image element not found');
         }
         
-        // Fallback to static data if API fails
-        if (!result) {
-            const results = getStaticResults();
-            result = results[category];
-        }
+        const result = {
+            title: getCategoryName(category),
+            image: imageElement.src,
+            description: imageElement.alt
+        };
         
-        if (!result) {
-            throw new Error('Result not found');
-        }
+        console.log('Opening modal with result:', result);
         
         // Show modal
         const modal = document.getElementById('imageModal');

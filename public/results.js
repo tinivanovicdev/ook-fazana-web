@@ -12,6 +12,9 @@ function initResultsPage() {
     
     // Set up keyboard navigation for modal
     setupKeyboardNavigation();
+    
+    // Set up click handlers for view buttons
+    setupViewButtonHandlers();
 }
 
 // Load results images from backend API
@@ -159,6 +162,23 @@ function setupKeyboardNavigation() {
         if (modal && modal.style.display === 'block') {
             if (event.key === 'Escape') {
                 closeModal();
+            }
+        }
+    });
+}
+
+// Setup view button click handlers
+function setupViewButtonHandlers() {
+    // Use event delegation to handle dynamically created buttons
+    document.addEventListener('click', function(event) {
+        if (event.target.closest('.view-btn')) {
+            const button = event.target.closest('.view-btn');
+            const imageElement = button.closest('.result-category').querySelector('.result-image');
+            const category = imageElement.dataset.category;
+            const year = imageElement.dataset.year;
+            
+            if (category && year) {
+                viewImage(category, year);
             }
         }
     });

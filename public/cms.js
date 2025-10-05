@@ -200,7 +200,7 @@ async function fetchResults() {
     // Transform the data to include full image URLs
     return results.map(result => ({
         ...result,
-        imageUrl: `${getBaseURL()}/${result.image_path}`
+        imageUrl: `${getBaseURL()}/${result.image_path.replace(/^public\//, '')}`
     }));
 }
 
@@ -295,7 +295,7 @@ async function fetchDocuments() {
     // Transform the data to include full file URLs
     return documents.map(doc => ({
         ...doc,
-        fileUrl: `${getBaseURL()}/${doc.file_path}`,
+        fileUrl: `${getBaseURL()}/${doc.file_path.replace(/^public\//, '')}`,
         uploadDate: doc.created_at
     }));
 }

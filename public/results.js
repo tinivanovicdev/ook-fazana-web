@@ -27,9 +27,11 @@ async function loadResultsImages() {
         // Transform results into the format expected by populateResultImages
         const formattedResults = {};
         results.forEach(result => {
+            // Remove 'public/' prefix from image path since static files are served from public folder
+            const imagePath = result.image_path.replace(/^public\//, '');
             formattedResults[result.category] = {
                 title: getCategoryName(result.category),
-                image: `/${result.image_path}`,
+                image: `/${imagePath}`,
                 description: result.description,
                 year: result.year
             };
@@ -155,9 +157,11 @@ async function viewImage(category, year) {
             const response = await fetch(`/api/results/${category}/${year}`);
             if (response.ok) {
                 const apiResult = await response.json();
+                // Remove 'public/' prefix from image path since static files are served from public folder
+                const imagePath = apiResult.image_path.replace(/^public\//, '');
                 result = {
                     title: getCategoryName(apiResult.category),
-                    image: `/${apiResult.image_path}`,
+                    image: `/${imagePath}`,
                     description: apiResult.description
                 };
             }

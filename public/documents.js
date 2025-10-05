@@ -33,7 +33,7 @@ async function loadDocuments() {
                 filename: doc.file_path.split('/').pop(),
                 date: formatDate(doc.created_at),
                 category: doc.category,
-                fileUrl: `/${doc.file_path}`
+                fileUrl: `/${doc.file_path.replace(/^public\//, '')}`
             });
         });
         

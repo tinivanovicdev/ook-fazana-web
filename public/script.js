@@ -292,11 +292,15 @@ function initImageCarousel() {
     
     // Auto-advance carousel every 5 seconds
     setInterval(() => {
-        currentImageIndex = (currentImageIndex + 1) % indicators.length;
-        indicators.forEach(ind => ind.classList.remove('active'));
-        indicators[currentImageIndex].classList.add('active');
-        if (teamImage) {
-            teamImage.src = carouselImages[currentImageIndex];
+        if (indicators.length > 0) {
+            currentImageIndex = (currentImageIndex + 1) % indicators.length;
+            indicators.forEach(ind => ind.classList.remove('active'));
+            if (indicators[currentImageIndex]) {
+                indicators[currentImageIndex].classList.add('active');
+            }
+            if (teamImage && carouselImages[currentImageIndex]) {
+                teamImage.src = carouselImages[currentImageIndex];
+            }
         }
     }, 5000);
 }

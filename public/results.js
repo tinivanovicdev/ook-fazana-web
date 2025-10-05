@@ -32,6 +32,11 @@ async function loadResultsImages() {
         // Transform results into the format expected by populateResultImages
         const formattedResults = {};
         
+        // Start with placeholder data for all categories
+        const staticResults = getStaticResults();
+        Object.assign(formattedResults, staticResults);
+        
+        // Override with API data if available
         if (results && results.length > 0) {
             results.forEach(result => {
                 // Remove 'public/' prefix from image path since static files are served from public folder
@@ -43,11 +48,6 @@ async function loadResultsImages() {
                     year: result.year
                 };
             });
-        } else {
-            // If no results from API, use static placeholder data
-            console.log('No results found in API, using placeholder data');
-            const staticResults = getStaticResults();
-            Object.assign(formattedResults, staticResults);
         }
         
         // Populate result images
@@ -111,6 +111,16 @@ function getSeasonYear(year) {
     };
     
     return yearMap[year] || `${parseInt(year) - 1}/${year}`;
+}
+
+// Get category display name
+function getCategoryName(category) {
+    const categories = {
+        'mini-odbojka': 'Mini Odbojka',
+        'djevojcice': 'Djevojčice',
+        'mlade-kadetkinje': 'Mlađe Kadetkinje'
+    };
+    return categories[category] || category;
 }
 
 // Populate result images with data

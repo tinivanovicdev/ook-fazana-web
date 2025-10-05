@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CMS - OOK FAŽANA</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* CMS Specific Styles */
+        .cms-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .login-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-width: 400px;
+            margin: 4rem auto;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .login-form input {
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        .login-form input:focus {
+            outline: none;
+            border-color: #2061a6;
+        }
+
+        .login-btn {
+            background: #2061a6;
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .login-btn:hover {
+            background: #1a4d8a;
+        }
+
+        .cms-dashboard {
+            display: none;
+        }
+
+        .cms-dashboard.active {
+            display: block;
+        }
+
+        .dashboard-header {
+            background: #2061a6;
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-nav {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .nav-tab {
+            padding: 0.75rem 1.5rem;
+            background: #f3f4f6;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav-tab.active {
+            background: #2061a6;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .upload-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .upload-form {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .form-group select,
+        .form-group input,
+        .form-group textarea {
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        .form-group select:focus,
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #2061a6;
+        }
+
+        .upload-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .upload-btn:hover {
+            background: #059669;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .result-item {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .result-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+        }
+
+        .result-info h4 {
+            margin: 0 0 0.5rem 0;
+            color: #2061a6;
+        }
+
+        .result-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: background-color 0.3s;
+        }
+
+        .btn-edit {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: #d97706;
+        }
+
+        .btn-delete {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #dc2626;
+        }
+
+        .documents-list {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .document-item {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .document-item:last-child {
+            border-bottom: none;
+        }
+
+        .document-info h4 {
+            margin: 0 0 0.25rem 0;
+            color: #374151;
+        }
+
+        .document-meta {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .document-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .message {
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .message.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .message.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .cms-container {
+                margin: 1rem auto;
+                padding: 0 0.5rem;
+            }
+
+            .dashboard-nav {
+                flex-direction: column;
+            }
+
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .document-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .document-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <!-- Logo -->
+                <div class="logo-section">
+                    <img src="assets/logo.webp" alt="OOK FAŽANA Logo" class="logo">
+                    <span class="club-name">OOK FAŽANA - CMS</span>
+                </div>
+
+                <!-- Back to Site -->
+                <nav class="desktop-nav">
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a href="index.html" class="nav-link">← Povratak na stranicu</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="cms-container">
+            <!-- Login Section -->
+            <div id="loginSection" class="login-section">
+                <h2>Prijava u CMS</h2>
+                <form class="login-form" id="loginForm">
+                    <input type="text" id="username" placeholder="Korisničko ime" required>
+                    <input type="password" id="password" placeholder="Lozinka" required>
+                    <button type="submit" class="login-btn">Prijavi se</button>
+                </form>
+                <div id="loginMessage" class="message"></div>
+            </div>
+
+            <!-- CMS Dashboard -->
+            <div id="cmsDashboard" class="cms-dashboard">
+                <div class="dashboard-header">
+                    <h2>CMS Dashboard</h2>
+                    <p>Upravljanje rezultatima i dokumentima</p>
+                    <button id="logoutBtn" class="btn" style="background: #ef4444; color: white; margin-top: 1rem;">Odjavi se</button>
+                </div>
+
+                <!-- Navigation Tabs -->
+                <div class="dashboard-nav">
+                    <button class="nav-tab active" data-tab="results">Rezultati</button>
+                    <button class="nav-tab" data-tab="documents">Dokumenti</button>
+                </div>
+
+                <!-- Messages -->
+                <div id="cmsMessage" class="message"></div>
+
+                <!-- Results Tab -->
+                <div id="resultsTab" class="tab-content active">
+                    <div class="upload-section">
+                        <h3>Dodaj/uredi rezultate</h3>
+                        <form class="upload-form" id="resultsForm">
+                            <div class="form-group">
+                                <label for="resultCategory">Kategorija:</label>
+                                <select id="resultCategory" required>
+                                    <option value="">Odaberite kategoriju</option>
+                                    <option value="mini-odbojka">Mini Odbojka</option>
+                                    <option value="djevojcice">Djevojčice</option>
+                                    <option value="mlade-kadetkinje">Mlađe Kadetkinje</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="resultYear">Godina:</label>
+                                <select id="resultYear" required>
+                                    <option value="">Odaberite godinu</option>
+                                    <option value="2024">2023/2024</option>
+                                    <option value="2023">2022/2023</option>
+                                    <option value="2022">2021/2022</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="resultImage">Slika rezultata:</label>
+                                <input type="file" id="resultImage" accept="image/*" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="resultDescription">Opis:</label>
+                                <textarea id="resultDescription" rows="3" placeholder="Kratki opis rezultata..."></textarea>
+                            </div>
+                            <button type="submit" class="upload-btn">Spremi rezultate</button>
+                        </form>
+                    </div>
+
+                    <!-- Results Grid -->
+                    <div class="results-grid" id="resultsGrid">
+                        <!-- Results will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Documents Tab -->
+                <div id="documentsTab" class="tab-content">
+                    <div class="upload-section">
+                        <h3>Dodaj dokument</h3>
+                        <form class="upload-form" id="documentsForm">
+                            <div class="form-group">
+                                <label for="documentTitle">Naziv dokumenta:</label>
+                                <input type="text" id="documentTitle" required placeholder="Unesite naziv dokumenta">
+                            </div>
+                            <div class="form-group">
+                                <label for="documentCategory">Kategorija:</label>
+                                <select id="documentCategory" required>
+                                    <option value="">Odaberite kategoriju</option>
+                                    <option value="statut">Statut</option>
+                                    <option value="pravilnici">Pravilnici</option>
+                                    <option value="izvjestaji">Izvještaji</option>
+                                    <option value="ostalo">Ostalo</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="documentFile">PDF dokument:</label>
+                                <input type="file" id="documentFile" accept=".pdf" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="documentDescription">Opis:</label>
+                                <textarea id="documentDescription" rows="3" placeholder="Kratki opis dokumenta..."></textarea>
+                            </div>
+                            <button type="submit" class="upload-btn">Dodaj dokument</button>
+                        </form>
+                    </div>
+
+                    <!-- Documents List -->
+                    <div class="documents-list" id="documentsList">
+                        <!-- Documents will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="cms.js"></script>
+</body>
+</html>

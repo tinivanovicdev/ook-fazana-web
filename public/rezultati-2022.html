@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rezultati 2021/2022 - OOK FAŽANA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <!-- Logo -->
+                <div class="logo-section">
+                    <img src="assets/logo.webp" alt="OOK FAŽANA Logo" class="logo">
+                    <span class="club-name">OOK FAŽANA</span>
+                </div>
+
+                <!-- Desktop Navigation -->
+                <nav class="desktop-nav">
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a href="index.html" class="nav-link">Home</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a href="#" class="nav-link" data-dropdown="info">
+                                Info
+                                <svg class="dropdown-arrow" width="12" height="8" viewBox="0 0 12 8">
+                                    <path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="2" fill="none"/>
+                                </svg>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="treneri.html" class="dropdown-link">Treneri</a></li>
+                                <li><a href="uprava.html" class="dropdown-link">Uprava</a></li>
+                                <li><a href="prijatelji.html" class="dropdown-link">Prijatelji</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a href="contact.html" class="nav-link">Kontakt</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a href="#" class="nav-link active" data-dropdown="rezultati">
+                                Rezultati
+                                <svg class="dropdown-arrow" width="12" height="8" viewBox="0 0 12 8">
+                                    <path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="2" fill="none"/>
+                                </svg>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="rezultati-2024.html" class="dropdown-link">2023/2024</a></li>
+                                <li><a href="rezultati-2023.html" class="dropdown-link">2022/2023</a></li>
+                                <li><a href="rezultati-2022.html" class="dropdown-link">2021/2022</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a href="dokumenti.html" class="nav-link">Dokumenti</a>
+                        </li>
+                    </ul>
+                </nav>
+
+                <!-- Mobile Menu Button -->
+                <button class="mobile-menu-btn" aria-label="Toggle menu">
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                </button>
+            </div>
+
+            <!-- Mobile Navigation -->
+            <nav class="mobile-nav">
+                <ul class="mobile-nav-list">
+                    <li class="mobile-nav-item">
+                        <a href="index.html" class="mobile-nav-link">Home</a>
+                    </li>
+                    <li class="mobile-nav-item dropdown">
+                        <a href="#" class="mobile-nav-link" data-mobile-dropdown="info">
+                            Info
+                            <svg class="dropdown-arrow" width="12" height="8" viewBox="0 0 12 8">
+                                <path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="2" fill="none"/>
+                            </svg>
+                        </a>
+                        <ul class="mobile-dropdown-menu">
+                            <li><a href="treneri.html" class="mobile-dropdown-link">Treneri</a></li>
+                            <li><a href="uprava.html" class="mobile-dropdown-link">Uprava</a></li>
+                            <li><a href="prijatelji.html" class="mobile-dropdown-link">Prijatelji</a></li>
+                        </ul>
+                    </li>
+                    <li class="mobile-nav-item">
+                        <a href="contact.html" class="mobile-nav-link">Kontakt</a>
+                    </li>
+                    <li class="mobile-nav-item dropdown">
+                        <a href="#" class="mobile-nav-link active" data-mobile-dropdown="rezultati">
+                            Rezultati
+                            <svg class="dropdown-arrow" width="12" height="8" viewBox="0 0 12 8">
+                                <path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="2" fill="none"/>
+                            </svg>
+                        </a>
+                        <ul class="mobile-dropdown-menu">
+                            <li><a href="rezultati-2024.html" class="mobile-dropdown-link">2023/2024</a></li>
+                            <li><a href="rezultati-2023.html" class="mobile-dropdown-link">2022/2023</a></li>
+                            <li><a href="rezultati-2022.html" class="mobile-dropdown-link">2021/2022</a></li>
+                        </ul>
+                    </li>
+                    <li class="mobile-nav-item">
+                        <a href="dokumenti.html" class="mobile-nav-link">Dokumenti</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <!-- Results Section -->
+        <section class="results-section">
+            <div class="container">
+                <div class="results-content">
+                    <!-- Results Categories -->
+                    <div class="results-categories">
+                        <div class="result-category">
+                            <h3>Mini Odbojka</h3>
+                            <div class="result-image-container">
+                                <img src="assets/results/mini-odbojka-2022.jpg" alt="Mini Odbojka Rezultati 2021/2022" class="result-image" data-category="mini-odbojka" data-year="2022">
+                                <div class="image-overlay">
+                                    <button class="view-btn" onclick="viewImage('mini-odbojka', '2022')">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                            <circle cx="12" cy="12" r="3"></circle>
+                                        </svg>
+                                        Pogledaj
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="result-category">
+                            <h3>Djevojčice</h3>
+                            <div class="result-image-container">
+                                <img src="assets/results/djevojcice-2022.jpg" alt="Djevojčice Rezultati 2021/2022" class="result-image" data-category="djevojcice" data-year="2022">
+                                <div class="image-overlay">
+                                    <button class="view-btn" onclick="viewImage('djevojcice', '2022')">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                            <circle cx="12" cy="12" r="3"></circle>
+                                        </svg>
+                                        Pogledaj
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="result-category">
+                            <h3>Mlađe Kadetkinje</h3>
+                            <div class="result-image-container">
+                                <img src="assets/results/mlade-kadetkinje-2022.jpg" alt="Mlađe Kadetkinje Rezultati 2021/2022" class="result-image" data-category="mlade-kadetkinje" data-year="2022">
+                                <div class="image-overlay">
+                                    <button class="view-btn" onclick="viewImage('mlade-kadetkinje', '2022')">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                            <circle cx="12" cy="12" r="3"></circle>
+                                        </svg>
+                                        Pogledaj
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <img id="modalImage" src="" alt="">
+            <div class="modal-info">
+                <h4 id="modalTitle"></h4>
+                <p id="modalDescription"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-title">
+                    <h2>KARTICA</h2>
+                    <h2>PODATAKA</h2>
+                </div>
+                <div class="footer-details">
+                    <p><strong>Otvoreni odbojkaški klub Fažana</strong></p>
+                    <p><strong>Adresa:</strong> Put Sv. Elizeja 27, 52212 Fažana</p>
+                    <p><strong>Adresa dvorane:</strong> Puljska ulica 9, 52212 Fažana</p>
+                    <p><strong>E-mail:</strong> info@ookfazana.hr</p>
+                    <p><strong>MB:</strong> 1664018</p>
+                    <p><strong>OIB:</strong> 34694850875</p>
+                    <p><strong>Žiro račun:</strong> HR3224840081101389765 RBA</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="results.js"></script>
+</body>
+</html>

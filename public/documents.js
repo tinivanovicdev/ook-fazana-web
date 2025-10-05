@@ -30,10 +30,10 @@ async function loadDocuments() {
             categorizedDocuments[doc.category].push({
                 id: doc.id,
                 title: doc.title,
-                filename: doc.file_path.split('/').pop(),
+                filename: doc.file_filename,
                 date: formatDate(doc.created_at),
                 category: doc.category,
-                fileUrl: `/${doc.file_path.replace(/^public\//, '')}`
+                fileUrl: `/api/documents/${doc.id}/file`
             });
         });
         

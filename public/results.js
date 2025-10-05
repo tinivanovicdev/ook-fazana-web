@@ -39,13 +39,14 @@ async function loadResultsImages() {
         // Override with API data if available
         if (results && results.length > 0) {
             results.forEach(result => {
-                // Remove 'public/' prefix from image path since static files are served from public folder
-                const imagePath = result.image_path.replace(/^public\//, '');
+                // Use the new API endpoint to serve images from database
+                const imageUrl = `/api/results/${result.id}/image`;
                 formattedResults[result.category] = {
                     title: getCategoryName(result.category),
-                    image: `/${imagePath}`,
+                    image: imageUrl,
                     description: result.description,
-                    year: result.year
+                    year: result.year,
+                    id: result.id // Store ID for modal functionality
                 };
             });
         }

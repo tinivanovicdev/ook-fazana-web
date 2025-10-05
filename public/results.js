@@ -17,25 +17,35 @@ function initResultsPage() {
 // Load results images from backend API
 async function loadResultsImages() {
     try {
+        console.log('Loading results images from API...');
         const response = await fetch('/api/results');
         if (!response.ok) {
             throw new Error('Failed to fetch results');
         }
         
         const results = await response.json();
+        console.log('API results:', results);
         
         // Transform results into the format expected by populateResultImages
         const formattedResults = {};
-        results.forEach(result => {
-            // Remove 'public/' prefix from image path since static files are served from public folder
-            const imagePath = result.image_path.replace(/^public\//, '');
-            formattedResults[result.category] = {
-                title: getCategoryName(result.category),
-                image: `/${imagePath}`,
-                description: result.description,
-                year: result.year
-            };
-        });
+        
+        if (results && results.length > 0) {
+            results.forEach(result => {
+                // Remove 'public/' prefix from image path since static files are served from public folder
+                const imagePath = result.image_path.replace(/^public\//, '');
+                formattedResults[result.category] = {
+                    title: getCategoryName(result.category),
+                    image: `/${imagePath}`,
+                    description: result.description,
+                    year: result.year
+                };
+            });
+        } else {
+            // If no results from API, use static placeholder data
+            console.log('No results found in API, using placeholder data');
+            const staticResults = getStaticResults();
+            Object.assign(formattedResults, staticResults);
+        }
         
         // Populate result images
         populateResultImages(formattedResults);
@@ -53,22 +63,25 @@ function getStaticResults() {
     // Get current year from URL or default to 2024
     const currentYear = getCurrentYearFromURL();
     
+    // Use placeholder SVG for missing results
+    const placeholderImage = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjI1MCIgdmlld0JveD0iMCAwIDQwMCAyNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMjUwIiBmaWxsPSIjZjNmNGY2Ii8+Cjx0ZXh0IHg9IjIwMCIgeT0iMTI1IiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiM5Y2EzYWYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPk5lbWEgcmV6dWx0YXRhPC90ZXh0Pgo8L3N2Zz4K';
+    
     return {
         'mini-odbojka': {
             title: 'Mini Odbojka',
-            image: `assets/results/mini-odbojka-${currentYear}.jpg`,
+            image: placeholderImage,
             description: `Rezultati Mini Odbojke za sezonu ${getSeasonYear(currentYear)}`,
             year: currentYear
         },
         'djevojcice': {
             title: 'Djevojčice',
-            image: `assets/results/djevojcice-${currentYear}.jpg`,
+            image: placeholderImage,
             description: `Rezultati Djevojčica za sezonu ${getSeasonYear(currentYear)}`,
             year: currentYear
         },
         'mlade-kadetkinje': {
             title: 'Mlađe Kadetkinje',
-            image: `assets/results/mlade-kadetkinje-${currentYear}.jpg`,
+            image: placeholderImage,
             description: `Rezultati Mlađih Kadetkinja za sezonu ${getSeasonYear(currentYear)}`,
             year: currentYear
         }
@@ -99,9 +112,12 @@ function getSeasonYear(year) {
 
 // Populate result images with data
 function populateResultImages(results) {
+    console.log('Populating result images:', results);
     Object.keys(results).forEach(categoryKey => {
         const imageElement = document.querySelector(`[data-category="${categoryKey}"]`);
         const result = results[categoryKey];
+        
+        console.log(`Setting image for ${categoryKey}:`, result.image);
         
         if (imageElement) {
             // Update image source

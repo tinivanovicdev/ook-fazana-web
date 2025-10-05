@@ -1,11 +1,11 @@
 [phases.setup]
-nixPkgs = ['nodejs', 'npm']
+nixPkgs = ['nodejs']
 
 [phases.install]
 cmds = ['npm ci']
 
 [phases.build]
-cmds = ['echo "No build step required"']
+cmds = ['echo "Build completed - static files in public folder"']
 
 [start]
 cmd = 'npm start'

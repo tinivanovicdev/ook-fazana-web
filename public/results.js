@@ -26,8 +26,16 @@ async function loadResultsImages() {
             throw new Error('Failed to fetch results');
         }
         
-        const results = await response.json();
-        console.log('API results:', results);
+        const allResults = await response.json();
+        console.log('API results:', allResults);
+        
+        // Get current year from URL (e.g., rezultati-2023.html -> 2023)
+        const currentYear = getCurrentYearFromURL();
+        console.log('Current year from URL:', currentYear);
+        
+        // Filter results for current year only
+        const results = allResults.filter(result => result.year === currentYear);
+        console.log('Filtered results for year', currentYear, ':', results);
         
         // Transform results into the format expected by populateResultImages
         const formattedResults = {};
@@ -39,13 +47,13 @@ async function loadResultsImages() {
         // Override with API data if available
         if (results && results.length > 0) {
             results.forEach(result => {
-                // Use direct file path from assets folder
+                // Use direct file path from database
                 formattedResults[result.category] = {
                     title: getCategoryName(result.category),
-                    image: result.image_path,
+                    image: `/${result.image_path}`,
                     description: result.description || `${result.category} results for ${result.year}`,
                     year: result.year,
-                    filename: result.filename
+                    id: result.id
                 };
             });
         }

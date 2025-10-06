@@ -28,12 +28,12 @@ async function loadDocuments() {
                 categorizedDocuments[doc.category] = [];
             }
             categorizedDocuments[doc.category].push({
-                id: doc.filename, // Use filename as ID
+                id: doc.id,
                 title: doc.title,
-                filename: doc.filename,
-                date: 'Recent', // Static date since we don't have creation time
+                filename: doc.file_path.split('/').pop(),
+                date: formatDate(doc.created_at),
                 category: doc.category,
-                fileUrl: doc.file_path
+                fileUrl: `/${doc.file_path}`
             });
         });
         

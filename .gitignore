@@ -11,13 +11,13 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 
-# Keep assets folder but ignore large files
-public/assets/results/*.jpg
-public/assets/results/*.jpeg
-public/assets/results/*.png
-public/assets/results/*.gif
-public/assets/results/*.webp
-public/assets/documents/*.pdf
+# Database
+database.sqlite
+*.db
+
+# Uploads
+uploads/
+public/uploads/
 
 # Logs
 logs

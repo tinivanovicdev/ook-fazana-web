@@ -103,9 +103,11 @@ function getStaticResults() {
 function getCurrentYearFromURL() {
     const path = window.location.pathname;
     if (path.includes('2022')) {
-        return '2022';
+        return '2022'; // Maps to 2022/23
     } else if (path.includes('2023')) {
-        return '2023';
+        return '2023'; // Maps to 2023/24
+    } else if (path.includes('2024')) {
+        return '2024'; // Maps to 2024/25
     }
     return '2024'; // default
 }
@@ -113,12 +115,12 @@ function getCurrentYearFromURL() {
 // Get season year format
 function getSeasonYear(year) {
     const yearMap = {
-        '2024': '2023/2024',
-        '2023': '2022/2023',
-        '2022': '2021/2022'
+        '2024': '2024/25',
+        '2023': '2023/24',
+        '2022': '2022/23'
     };
     
-    return yearMap[year] || `${parseInt(year) - 1}/${year}`;
+    return yearMap[year] || '2024/25';
 }
 
 // Get category display name

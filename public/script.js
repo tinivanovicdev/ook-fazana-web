@@ -166,20 +166,9 @@ function initActiveNavigation() {
     });
 }
 
-// Utility function to generate year options for Rezultati dropdown
+// Static year options for Rezultati dropdown
 function generateYearOptions() {
-    const currentYear = new Date().getFullYear();
-    const startYear = 2022;
-    const yearOptions = [];
-
-    for (let year = currentYear; year >= startYear; year--) {
-        // Format: 2023/24, 2022/23, etc.
-        const nextYear = year + 1;
-        const displayYear = `${year}/${nextYear.toString().slice(2)}`;
-        yearOptions.push(displayYear);
-    }
-
-    return yearOptions;
+    return ['2024/25', '2023/24', '2022/23'];
 }
 
 // Function to update year options (can be called when needed)
@@ -206,10 +195,6 @@ function updateYearOptions() {
                     href = 'rezultati-2023.html';
                 } else if (year === '2022/23') {
                     href = 'rezultati-2022.html';
-                } else {
-                    // For future years, generate filename
-                    const yearNum = year.split('/')[0];
-                    href = `rezultati-${yearNum}.html`;
                 }
                 
                 a.href = href;
@@ -222,8 +207,7 @@ function updateYearOptions() {
     });
 }
 
-// Initialize year options
-updateYearOptions();
+// Year options are now static in HTML, no need to generate dynamically
 
 // Smooth scrolling for anchor links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {

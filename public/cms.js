@@ -341,11 +341,11 @@ function getCategoryName(category) {
 
 function getSeasonYear(year) {
     const yearMap = {
-        '2024': '2023/2024',
-        '2023': '2022/2023',
-        '2022': '2021/2022'
+        '2024': '2024/25',
+        '2023': '2023/24',
+        '2022': '2022/23'
     };
-    return yearMap[year] || `${parseInt(year) - 1}/${year}`;
+    return yearMap[year] || '2024/25';
 }
 
 function formatDate(dateString) {

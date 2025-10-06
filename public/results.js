@@ -103,11 +103,11 @@ function getStaticResults() {
 function getCurrentYearFromURL() {
     const path = window.location.pathname;
     if (path.includes('2022')) {
-        return '2022'; // Maps to 2022/23
+        return '2022'; // rezultati-2022.html shows 2022/23 data (stored as year 2022)
     } else if (path.includes('2023')) {
-        return '2023'; // Maps to 2023/24
+        return '2023'; // rezultati-2023.html shows 2023/24 data (stored as year 2023)
     } else if (path.includes('2024')) {
-        return '2024'; // Maps to 2024/25
+        return '2024'; // rezultati-2024.html shows 2024/25 data (stored as year 2024)
     }
     return '2024'; // default
 }

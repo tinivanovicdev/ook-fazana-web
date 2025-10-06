@@ -337,6 +337,7 @@ app.post('/api/login', async (req, res) => {
 app.get('/api/results', async (req, res) => {
     try {
         const [rows] = await db.execute('SELECT id, category, year, image_filename, image_mimetype, description, created_at, updated_at FROM results ORDER BY year DESC, category');
+        console.log(`GET /api/results returned ${rows.length} records:`, rows.map(r => ({id: r.id, category: r.category, year: r.year})));
         res.json(rows);
     } catch (error) {
         console.error('Database error in GET /api/results:', error);
@@ -453,23 +454,28 @@ app.delete('/api/results/:id', authenticateToken, async (req, res) => {
 app.get('/api/results/:id/image', async (req, res) => {
     try {
         const { id } = req.params;
+        console.log(`BLOB endpoint called for result ID: ${id}`);
         
         const [rows] = await db.execute(
             'SELECT image_data, image_mimetype FROM results WHERE id = ?',
             [id]
         );
         
+        console.log(`Query returned ${rows.length} rows for ID ${id}`);
+        
         if (rows.length === 0) {
+            console.log(`No result found for ID ${id}`);
             return res.status(404).json({ error: 'Result not found' });
         }
         
         const { image_data, image_mimetype } = rows[0];
+        console.log(`Serving image data for ID ${id}, mimetype: ${image_mimetype}, data size: ${image_data ? image_data.length : 'null'}`);
         
         res.set('Content-Type', image_mimetype);
         res.send(image_data);
     } catch (error) {
-        console.error('Database error:', error);
-        res.status(500).json({ error: 'Database error' });
+        console.error('Database error in BLOB endpoint:', error);
+        res.status(500).json({ error: 'Database error', details: error.message });
     }
 });
 

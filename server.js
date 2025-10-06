@@ -345,25 +345,7 @@ app.get('/api/results', async (req, res) => {
     }
 });
 
-app.get('/api/results/:category/:year', async (req, res) => {
-    try {
-        const { category, year } = req.params;
-        
-        const [rows] = await db.execute(
-            'SELECT id, category, year, image_filename, image_mimetype, description, created_at, updated_at FROM results WHERE category = ? AND year = ?',
-            [category, year]
-        );
-        
-        if (rows.length === 0) {
-            return res.status(404).json({ error: 'Result not found' });
-        }
-        
-        res.json(rows[0]);
-    } catch (error) {
-        console.error('Database error:', error);
-        res.status(500).json({ error: 'Database error' });
-    }
-});
+// This route moved after the BLOB endpoint to avoid routing conflicts
 
 app.post('/api/results', authenticateToken, upload.single('image'), async (req, res) => {
     try {
@@ -454,7 +436,10 @@ app.delete('/api/results/:id', authenticateToken, async (req, res) => {
 app.get('/api/results/:id/image', async (req, res) => {
     try {
         const { id } = req.params;
+        console.log(`=== BLOB ENDPOINT HIT ===`);
         console.log(`BLOB endpoint called for result ID: ${id}`);
+        console.log(`Request URL: ${req.url}`);
+        console.log(`Request method: ${req.method}`);
         
         const [rows] = await db.execute(
             'SELECT image_data, image_mimetype FROM results WHERE id = ?',
@@ -462,6 +447,14 @@ app.get('/api/results/:id/image', async (req, res) => {
         );
         
         console.log(`Query returned ${rows.length} rows for ID ${id}`);
+        if (rows.length > 0) {
+            console.log(`Row data:`, { 
+                id: id, 
+                hasImageData: !!rows[0].image_data, 
+                mimetype: rows[0].image_mimetype,
+                dataType: typeof rows[0].image_data
+            });
+        }
         
         if (rows.length === 0) {
             console.log(`No result found for ID ${id}`);
@@ -469,13 +462,41 @@ app.get('/api/results/:id/image', async (req, res) => {
         }
         
         const { image_data, image_mimetype } = rows[0];
+        
+        if (!image_data) {
+            console.log(`No image data found for ID ${id}`);
+            return res.status(404).json({ error: 'Image data not found' });
+        }
+        
         console.log(`Serving image data for ID ${id}, mimetype: ${image_mimetype}, data size: ${image_data ? image_data.length : 'null'}`);
         
         res.set('Content-Type', image_mimetype);
         res.send(image_data);
+        console.log(`=== BLOB ENDPOINT COMPLETED ===`);
     } catch (error) {
         console.error('Database error in BLOB endpoint:', error);
         res.status(500).json({ error: 'Database error', details: error.message });
+    }
+});
+
+// Get results by category and year (moved after BLOB endpoint to avoid routing conflicts)
+app.get('/api/results/:category/:year', async (req, res) => {
+    try {
+        const { category, year } = req.params;
+        
+        const [rows] = await db.execute(
+            'SELECT id, category, year, image_filename, image_mimetype, description, created_at, updated_at FROM results WHERE category = ? AND year = ?',
+            [category, year]
+        );
+        
+        if (rows.length === 0) {
+            return res.status(404).json({ error: 'Result not found' });
+        }
+        
+        res.json(rows[0]);
+    } catch (error) {
+        console.error('Database error:', error);
+        res.status(500).json({ error: 'Database error' });
     }
 });
 

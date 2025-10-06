@@ -539,6 +539,11 @@ app.post('/api/documents', authenticateToken, upload.single('file'), async (req,
         }
 
         // Store BLOB data in database
+        console.log(`Uploading document: ${req.file.originalname}`);
+        console.log(`File size: ${req.file.buffer.length} bytes`);
+        console.log(`MIME type: ${req.file.mimetype}`);
+        console.log(`Buffer type: ${typeof req.file.buffer}, is Buffer: ${Buffer.isBuffer(req.file.buffer)}`);
+        
         const [result] = await db.execute(
             'INSERT INTO documents (title, category, file_data, file_filename, file_mimetype, description) VALUES (?, ?, ?, ?, ?, ?)',
             [title, category || 'general', req.file.buffer, req.file.originalname, req.file.mimetype, description]
@@ -606,6 +611,12 @@ app.get('/api/documents/:id/file', async (req, res) => {
         }
         
         const { file_data, file_mimetype, file_filename } = rows[0];
+        
+        console.log(`Downloading document ID: ${id}`);
+        console.log(`Filename: ${file_filename}`);
+        console.log(`MIME type: ${file_mimetype}`);
+        console.log(`Data size: ${file_data ? file_data.length : 'null'} bytes`);
+        console.log(`Data type: ${typeof file_data}, is Buffer: ${Buffer.isBuffer(file_data)}`);
         
         res.set('Content-Type', file_mimetype);
         res.set('Content-Disposition', `attachment; filename="${file_filename}"`);

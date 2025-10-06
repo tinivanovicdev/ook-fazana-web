@@ -81,8 +81,16 @@ async function initDatabase() {
             };
         }
         
-        db = await mysql.createConnection(connectionConfig);
-        console.log('Connected to MySQL database');
+        // Use a connection pool to avoid closed connection issues
+        db = await mysql.createPool({
+            ...connectionConfig,
+            waitForConnections: true,
+            connectionLimit: 10,
+            queueLimit: 0,
+            enableKeepAlive: true,
+            keepAliveInitialDelay: 0
+        });
+        console.log('Connected to MySQL database (pool)');
         
         // Initialize database tables
         await initializeTables();
@@ -434,18 +442,10 @@ app.put('/api/results/:id', authenticateToken, upload.single('image'), async (re
         let updateQuery = 'UPDATE results SET category = ?, year = ?, description = ?, updated_at = CURRENT_TIMESTAMP';
         let params = [category, year, description];
 
-        // If a new image is uploaded, update the image path
+        // If a new image is uploaded, update the image blob columns
         if (req.file) {
-            updateQuery += ', image_path = ?';
-            params.push(req.file.path);
-            
-            // Get old image path to delete it
-            const [rows] = await db.execute('SELECT image_path FROM results WHERE id = ?', [id]);
-            if (rows.length > 0 && rows[0].image_path) {
-                fs.unlink(rows[0].image_path, (err) => {
-                    if (err) console.error('Error deleting old image:', err);
-                });
-            }
+            updateQuery += ', image_data = ?, image_filename = ?, image_mimetype = ?';
+            params.push(req.file.buffer, req.file.originalname, req.file.mimetype);
         }
 
         updateQuery += ' WHERE id = ?';
@@ -469,20 +469,14 @@ app.delete('/api/results/:id', authenticateToken, async (req, res) => {
     try {
         const { id } = req.params;
 
-        // Get image path before deleting
-        const [rows] = await db.execute('SELECT image_path FROM results WHERE id = ?', [id]);
-
+        // Ensure record exists
+        const [rows] = await db.execute('SELECT id FROM results WHERE id = ?', [id]);
         if (rows.length === 0) {
             return res.status(404).json({ error: 'Result not found' });
         }
 
         // Delete the record
         await db.execute('DELETE FROM results WHERE id = ?', [id]);
-
-        // Delete the image file
-        fs.unlink(rows[0].image_path, (err) => {
-            if (err) console.error('Error deleting image file:', err);
-        });
 
         res.json({ message: 'Result deleted successfully' });
 
@@ -575,7 +569,8 @@ app.post('/api/documents', authenticateToken, upload.single('file'), async (req,
             id: result.insertId,
             title,
             category,
-            file_path: filePath,
+            file_filename: fileFilename,
+            file_mimetype: fileMimetype,
             description,
             message: 'Document saved successfully'
         });
@@ -594,18 +589,10 @@ app.put('/api/documents/:id', authenticateToken, upload.single('file'), async (r
         let updateQuery = 'UPDATE documents SET title = ?, category = ?, description = ?, updated_at = CURRENT_TIMESTAMP';
         let params = [title, category, description];
 
-        // If a new file is uploaded, update the file path
+        // If a new file is uploaded, update the blob columns
         if (req.file) {
-            updateQuery += ', file_path = ?';
-            params.push(req.file.path);
-            
-            // Get old file path to delete it
-            const [rows] = await db.execute('SELECT file_path FROM documents WHERE id = ?', [id]);
-            if (rows.length > 0 && rows[0].file_path) {
-                fs.unlink(rows[0].file_path, (err) => {
-                    if (err) console.error('Error deleting old file:', err);
-                });
-            }
+            updateQuery += ', file_data = ?, file_filename = ?, file_mimetype = ?';
+            params.push(req.file.buffer, req.file.originalname, req.file.mimetype);
         }
 
         updateQuery += ' WHERE id = ?';
@@ -629,20 +616,14 @@ app.delete('/api/documents/:id', authenticateToken, async (req, res) => {
     try {
         const { id } = req.params;
 
-        // Get file path before deleting
-        const [rows] = await db.execute('SELECT file_path FROM documents WHERE id = ?', [id]);
-
+        // Ensure record exists
+        const [rows] = await db.execute('SELECT id FROM documents WHERE id = ?', [id]);
         if (rows.length === 0) {
             return res.status(404).json({ error: 'Document not found' });
         }
 
         // Delete the record
         await db.execute('DELETE FROM documents WHERE id = ?', [id]);
-
-        // Delete the file
-        fs.unlink(rows[0].file_path, (err) => {
-            if (err) console.error('Error deleting file:', err);
-        });
 
         res.json({ message: 'Document deleted successfully' });
 

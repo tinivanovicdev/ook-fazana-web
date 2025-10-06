@@ -333,7 +333,6 @@ function getCategoryName(category) {
         'mlade-kadetkinje': 'Mlađe Kadetkinje',
         'statut': 'Statut',
         'pravilnici': 'Pravilnici',
-        'izvjestaji': 'Izvještaji',
         'ostalo': 'Ostalo'
     };
     return categories[category] || category;

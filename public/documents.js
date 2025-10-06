@@ -96,7 +96,6 @@ function populateDocumentCategories(documents) {
     const categoryMapping = {
         'statut': 'statut-documents',
         'prijave': 'prijave-documents', 
-        'natjecanja': 'natjecanja-documents',
         'ostali': 'ostali-documents',
         'general': 'ostali-documents' // Default category goes to "Ostali dokumenti"
     };

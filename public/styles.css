@@ -963,7 +963,7 @@ body {
     .footer-content {
         flex-direction: column;
         gap: 2rem;
-        text-align: center;
+        text-align: start;
     }
 
     .footer-title h2 {

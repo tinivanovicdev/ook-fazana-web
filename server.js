@@ -136,7 +136,7 @@ async function migrateTables() {
             await db.execute('DROP TABLE results');
             await db.execute('RENAME TABLE results_new TO results');
             
-            console.log('Results table migrated successfully');
+            console.log('Results table migrated successfully - existing data cleared due to schema change from file paths to BLOB storage');
         }
         
         // Check if documents table has old schema and migrate
@@ -171,7 +171,7 @@ async function migrateTables() {
             await db.execute('DROP TABLE documents');
             await db.execute('RENAME TABLE documents_new TO documents');
             
-            console.log('Documents table migrated successfully');
+            console.log('Documents table migrated successfully - existing data cleared due to schema change from file paths to BLOB storage');
         }
         
     } catch (error) {

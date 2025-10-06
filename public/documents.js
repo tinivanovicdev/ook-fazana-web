@@ -92,14 +92,29 @@ function getStaticDocuments() {
 
 // Populate document categories with data
 function populateDocumentCategories(documents) {
+    // Map category keys to HTML elements
+    const categoryMapping = {
+        'statut': 'statut-documents',
+        'prijave': 'prijave-documents', 
+        'natjecanja': 'natjecanja-documents',
+        'ostali': 'ostali-documents',
+        'general': 'ostali-documents' // Default category goes to "Ostali dokumenti"
+    };
+    
+    // Clear all containers first
+    Object.values(categoryMapping).forEach(elementId => {
+        const element = document.getElementById(elementId);
+        if (element) {
+            element.innerHTML = '';
+        }
+    });
+    
+    // Populate each category
     Object.keys(documents).forEach(categoryKey => {
-        const categoryId = `${categoryKey}-documents`;
+        const categoryId = categoryMapping[categoryKey] || categoryMapping['general'];
         const container = document.getElementById(categoryId);
         
-        if (container) {
-            // Clear existing static content
-            container.innerHTML = '';
-            
+        if (container && documents[categoryKey]) {
             // Add documents from database
             documents[categoryKey].forEach(doc => {
                 const documentElement = createDocumentElement(doc);
@@ -128,7 +143,7 @@ function createDocumentElement(document) {
             <p class="document-date">Datum: ${formatDate(document.date)}</p>
         </div>
         <div class="document-actions">
-            <a href="#" class="download-btn" data-filename="${document.filename}" data-id="${document.id}">
+            <a href="${document.fileUrl}" class="download-btn" data-filename="${document.filename}" data-id="${document.id}" download>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                     <polyline points="7,10 12,15 17,10"></polyline>

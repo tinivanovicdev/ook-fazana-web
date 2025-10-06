@@ -50,7 +50,7 @@ async function loadResultsImages() {
                 // Use direct file path from database
                 formattedResults[result.category] = {
                     title: getCategoryName(result.category),
-                    image: `/${result.image_path}`,
+                    image: `/api/results/${result.id}/image`,
                     description: result.description || `${result.category} results for ${result.year}`,
                     year: result.year,
                     id: result.id

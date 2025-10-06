@@ -200,7 +200,7 @@ async function fetchResults() {
     // Transform the data to include full image URLs
     return results.map(result => ({
         ...result,
-        imageUrl: `${getBaseURL()}/${result.image_path}`
+        imageUrl: `${getBaseURL()}/api/results/${result.id}/image`
     }));
 }
 
@@ -295,7 +295,7 @@ async function fetchDocuments() {
     // Transform the data to include full file URLs
     return documents.map(doc => ({
         ...doc,
-        fileUrl: `${getBaseURL()}/${doc.file_path}`,
+        fileUrl: `${getBaseURL()}/api/documents/${doc.id}/file`,
         uploadDate: doc.created_at
     }));
 }

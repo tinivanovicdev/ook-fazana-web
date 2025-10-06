@@ -113,16 +113,18 @@ async function migrateTables() {
         
         const columnNames = resultsColumns.map(col => col.COLUMN_NAME);
         
-        if (columnNames.includes('image_data') && !columnNames.includes('image_path')) {
-            console.log('Migrating results table from BLOB to file path schema...');
+        if (columnNames.includes('image_path') && !columnNames.includes('image_data')) {
+            console.log('Migrating results table from file path to BLOB schema...');
             
-            // Create new table with file path schema
+            // Create new table with BLOB schema
             await db.execute(`
                 CREATE TABLE results_new (
                     id INT AUTO_INCREMENT PRIMARY KEY,
                     category VARCHAR(50) NOT NULL,
                     year VARCHAR(10) NOT NULL,
-                    image_path VARCHAR(255) NOT NULL,
+                    image_data LONGBLOB NOT NULL,
+                    image_filename VARCHAR(255) NOT NULL,
+                    image_mimetype VARCHAR(100) NOT NULL,
                     description TEXT,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -147,16 +149,18 @@ async function migrateTables() {
         
         const docColumnNames = documentsColumns.map(col => col.COLUMN_NAME);
         
-        if (docColumnNames.includes('file_data') && !docColumnNames.includes('file_path')) {
-            console.log('Migrating documents table from BLOB to file path schema...');
+        if (docColumnNames.includes('file_path') && !docColumnNames.includes('file_data')) {
+            console.log('Migrating documents table from file path to BLOB schema...');
             
-            // Create new table with file path schema
+            // Create new table with BLOB schema
             await db.execute(`
                 CREATE TABLE documents_new (
                     id INT AUTO_INCREMENT PRIMARY KEY,
                     title VARCHAR(255) NOT NULL,
                     category VARCHAR(50) NOT NULL,
-                    file_path VARCHAR(255) NOT NULL,
+                    file_data LONGBLOB NOT NULL,
+                    file_filename VARCHAR(255) NOT NULL,
+                    file_mimetype VARCHAR(100) NOT NULL,
                     description TEXT,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -187,7 +191,9 @@ async function initializeTables() {
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 category VARCHAR(50) NOT NULL,
                 year VARCHAR(10) NOT NULL,
-                image_path VARCHAR(255) NOT NULL,
+                image_data LONGBLOB NOT NULL,
+                image_filename VARCHAR(255) NOT NULL,
+                image_mimetype VARCHAR(100) NOT NULL,
                 description TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -201,7 +207,9 @@ async function initializeTables() {
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 title VARCHAR(255) NOT NULL,
                 category VARCHAR(50) NOT NULL,
-                file_path VARCHAR(255) NOT NULL,
+                file_data LONGBLOB NOT NULL,
+                file_filename VARCHAR(255) NOT NULL,
+                file_mimetype VARCHAR(100) NOT NULL,
                 description TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -236,39 +244,8 @@ async function initializeTables() {
     }
 }
 
-// File upload configuration - store in assets folder
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        const uploadDir = file.fieldname === 'image' ? 'public/assets/results' : 'public/assets/documents';
-        
-        // Create directory if it doesn't exist
-        if (!fs.existsSync(uploadDir)) {
-            fs.mkdirSync(uploadDir, { recursive: true });
-        }
-        
-        cb(null, uploadDir);
-    },
-    filename: (req, file, cb) => {
-        // Create consistent naming convention
-        let filename;
-        if (file.fieldname === 'image') {
-            // For results: category-year.extension (e.g., mini-odbojka-2023.jpg)
-            const { category, year } = req.body;
-            const extension = path.extname(file.originalname);
-            filename = `${category}-${year}${extension}`;
-        } else {
-            // For documents: sanitized-title.extension
-            const { title } = req.body;
-            const sanitizedTitle = title.toLowerCase()
-                .replace(/[^a-z0-9]/g, '-')
-                .replace(/-+/g, '-')
-                .replace(/^-|-$/g, '');
-            const extension = path.extname(file.originalname);
-            filename = `${sanitizedTitle}${extension}`;
-        }
-        cb(null, filename);
-    }
-});
+// File upload configuration - store in memory for BLOB storage
+const storage = multer.memoryStorage();
 
 const upload = multer({ 
     storage: storage,
@@ -359,7 +336,7 @@ app.post('/api/login', async (req, res) => {
 // Results API routes
 app.get('/api/results', async (req, res) => {
     try {
-        const [rows] = await db.execute('SELECT id, category, year, image_path, description, created_at, updated_at FROM results ORDER BY year DESC, category');
+        const [rows] = await db.execute('SELECT id, category, year, image_filename, image_mimetype, description, created_at, updated_at FROM results ORDER BY year DESC, category');
         res.json(rows);
     } catch (error) {
         console.error('Database error in GET /api/results:', error);
@@ -372,7 +349,7 @@ app.get('/api/results/:category/:year', async (req, res) => {
         const { category, year } = req.params;
         
         const [rows] = await db.execute(
-            'SELECT id, category, year, image_path, description, created_at, updated_at FROM results WHERE category = ? AND year = ?',
+            'SELECT id, category, year, image_filename, image_mimetype, description, created_at, updated_at FROM results WHERE category = ? AND year = ?',
             [category, year]
         );
         
@@ -399,18 +376,17 @@ app.post('/api/results', authenticateToken, upload.single('image'), async (req, 
             return res.status(400).json({ error: 'Category and year are required' });
         }
 
-        // Store file path in database
-        const imagePath = `assets/results/${req.file.filename}`;
-
+        // Store BLOB data in database
         await db.execute(
-            'INSERT INTO results (category, year, image_path, description) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE image_path = VALUES(image_path), description = VALUES(description), updated_at = CURRENT_TIMESTAMP',
-            [category, year, imagePath, description]
+            'INSERT INTO results (category, year, image_data, image_filename, image_mimetype, description) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE image_data = VALUES(image_data), image_filename = VALUES(image_filename), image_mimetype = VALUES(image_mimetype), description = VALUES(description), updated_at = CURRENT_TIMESTAMP',
+            [category, year, req.file.buffer, req.file.originalname, req.file.mimetype, description]
         );
         
         res.json({
             category,
             year,
-            image_path: imagePath,
+            image_filename: req.file.originalname,
+            image_mimetype: req.file.mimetype,
             description,
             message: 'Result saved successfully'
         });
@@ -473,10 +449,34 @@ app.delete('/api/results/:id', authenticateToken, async (req, res) => {
     }
 });
 
+// Get result image as BLOB
+app.get('/api/results/:id/image', async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        const [rows] = await db.execute(
+            'SELECT image_data, image_mimetype FROM results WHERE id = ?',
+            [id]
+        );
+        
+        if (rows.length === 0) {
+            return res.status(404).json({ error: 'Result not found' });
+        }
+        
+        const { image_data, image_mimetype } = rows[0];
+        
+        res.set('Content-Type', image_mimetype);
+        res.send(image_data);
+    } catch (error) {
+        console.error('Database error:', error);
+        res.status(500).json({ error: 'Database error' });
+    }
+});
+
 // Documents API routes
 app.get('/api/documents', async (req, res) => {
     try {
-        const [rows] = await db.execute('SELECT id, title, category, file_path, description, created_at, updated_at FROM documents ORDER BY created_at DESC');
+        const [rows] = await db.execute('SELECT id, title, category, file_filename, file_mimetype, description, created_at, updated_at FROM documents ORDER BY created_at DESC');
         res.json(rows);
     } catch (error) {
         console.error('Database error in GET /api/documents:', error);
@@ -488,7 +488,7 @@ app.get('/api/documents/:id', async (req, res) => {
     try {
         const { id } = req.params;
         
-        const [rows] = await db.execute('SELECT id, title, category, file_path, description, created_at, updated_at FROM documents WHERE id = ?', [id]);
+        const [rows] = await db.execute('SELECT id, title, category, file_filename, file_mimetype, description, created_at, updated_at FROM documents WHERE id = ?', [id]);
         
         if (rows.length === 0) {
             return res.status(404).json({ error: 'Document not found' });
@@ -513,19 +513,18 @@ app.post('/api/documents', authenticateToken, upload.single('file'), async (req,
             return res.status(400).json({ error: 'Title is required' });
         }
 
-        // Store file path in database
-        const filePath = `assets/documents/${req.file.filename}`;
-
+        // Store BLOB data in database
         const [result] = await db.execute(
-            'INSERT INTO documents (title, category, file_path, description) VALUES (?, ?, ?, ?)',
-            [title, category || 'general', filePath, description]
+            'INSERT INTO documents (title, category, file_data, file_filename, file_mimetype, description) VALUES (?, ?, ?, ?, ?, ?)',
+            [title, category || 'general', req.file.buffer, req.file.originalname, req.file.mimetype, description]
         );
         
         res.json({
             id: result.insertId,
             title,
             category: category || 'general',
-            file_path: filePath,
+            file_filename: req.file.originalname,
+            file_mimetype: req.file.mimetype,
             description,
             message: 'Document saved successfully'
         });
@@ -561,6 +560,31 @@ app.put('/api/documents/:id', authenticateToken, upload.single('file'), async (r
         
         res.json({ message: 'Document updated successfully' });
 
+    } catch (error) {
+        console.error('Database error:', error);
+        res.status(500).json({ error: 'Database error' });
+    }
+});
+
+// Get document file as BLOB
+app.get('/api/documents/:id/file', async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        const [rows] = await db.execute(
+            'SELECT file_data, file_mimetype, file_filename FROM documents WHERE id = ?',
+            [id]
+        );
+        
+        if (rows.length === 0) {
+            return res.status(404).json({ error: 'Document not found' });
+        }
+        
+        const { file_data, file_mimetype, file_filename } = rows[0];
+        
+        res.set('Content-Type', file_mimetype);
+        res.set('Content-Disposition', `attachment; filename="${file_filename}"`);
+        res.send(file_data);
     } catch (error) {
         console.error('Database error:', error);
         res.status(500).json({ error: 'Database error' });

@@ -125,7 +125,7 @@ function populateDocumentCategories(documents) {
 }
 
 // Create document element
-function createDocumentElement(document) {
+function createDocumentElement(doc) {
     const div = document.createElement('div');
     div.className = 'document-item';
     div.innerHTML = `
@@ -139,11 +139,11 @@ function createDocumentElement(document) {
             </svg>
         </div>
         <div class="document-info">
-            <h4>${document.title}</h4>
-            <p class="document-date">Datum: ${formatDate(document.date)}</p>
+            <h4>${doc.title}</h4>
+            <p class="document-date">Datum: ${formatDate(doc.date)}</p>
         </div>
         <div class="document-actions">
-            <a href="${document.fileUrl}" class="download-btn" data-filename="${document.filename}" data-id="${document.id}" download>
+            <a href="${doc.fileUrl}" class="download-btn" data-filename="${doc.filename}" data-id="${doc.id}" download>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                     <polyline points="7,10 12,15 17,10"></polyline>

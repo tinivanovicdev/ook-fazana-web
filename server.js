@@ -549,6 +549,20 @@ app.post('/api/documents', authenticateToken, upload.single('file'), async (req,
             [title, category || 'general', req.file.buffer, req.file.originalname, req.file.mimetype, description]
         );
         
+        // Verify the data was stored correctly
+        const [verifyRows] = await db.execute(
+            'SELECT LENGTH(file_data) as data_length FROM documents WHERE id = ?',
+            [result.insertId]
+        );
+        
+        if (verifyRows.length > 0) {
+            const storedLength = verifyRows[0].data_length;
+            console.log(`Uploaded: ${req.file.buffer.length} bytes, Stored: ${storedLength} bytes`);
+            if (storedLength !== req.file.buffer.length) {
+                console.error(`DATA CORRUPTION: Upload size (${req.file.buffer.length}) != Stored size (${storedLength})`);
+            }
+        }
+        
         res.json({
             id: result.insertId,
             title,
@@ -617,6 +631,14 @@ app.get('/api/documents/:id/file', async (req, res) => {
         console.log(`MIME type: ${file_mimetype}`);
         console.log(`Data size: ${file_data ? file_data.length : 'null'} bytes`);
         console.log(`Data type: ${typeof file_data}, is Buffer: ${Buffer.isBuffer(file_data)}`);
+        
+        // Additional debugging for BLOB data
+        if (file_data) {
+            console.log(`First 20 bytes (hex): ${file_data.slice(0, 20).toString('hex')}`);
+            console.log(`First 20 bytes (ascii): ${file_data.slice(0, 20).toString('ascii')}`);
+        } else {
+            console.log('file_data is null or undefined');
+        }
         
         res.set('Content-Type', file_mimetype);
         res.set('Content-Disposition', `attachment; filename="${file_filename}"`);

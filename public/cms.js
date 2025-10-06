@@ -200,7 +200,7 @@ async function fetchResults() {
     // Transform the data to include full image URLs
     return results.map(result => ({
         ...result,
-        imageUrl: `${getBaseURL()}/api/results/${result.id}/image`
+        imageUrl: `${getBaseURL()}${result.image_path}`
     }));
 }
 
@@ -295,8 +295,8 @@ async function fetchDocuments() {
     // Transform the data to include full file URLs
     return documents.map(doc => ({
         ...doc,
-        fileUrl: `${getBaseURL()}/api/documents/${doc.id}/file`,
-        uploadDate: doc.created_at
+        fileUrl: `${getBaseURL()}${doc.file_path}`,
+        uploadDate: 'Recent'
     }));
 }
 
@@ -404,12 +404,9 @@ async function deleteDocument(id) {
 }
 
 // API functions for CRUD operations
-async function deleteResultsFromAPI(id) {
-    const response = await fetch(`${getBaseURL()}${CMS_CONFIG.api.results}/${id}`, {
-        method: 'DELETE',
-        headers: {
-            'Authorization': `Bearer ${localStorage.getItem('cms_token')}`
-        }
+async function deleteResultsFromAPI(filename) {
+    const response = await fetch(`${getBaseURL()}/api/results/${filename}`, {
+        method: 'DELETE'
     });
     
     if (!response.ok) {
@@ -420,12 +417,9 @@ async function deleteResultsFromAPI(id) {
     return response.json();
 }
 
-async function deleteDocumentFromAPI(id) {
-    const response = await fetch(`${getBaseURL()}${CMS_CONFIG.api.documents}/${id}`, {
-        method: 'DELETE',
-        headers: {
-            'Authorization': `Bearer ${localStorage.getItem('cms_token')}`
-        }
+async function deleteDocumentFromAPI(filename) {
+    const response = await fetch(`${getBaseURL()}/api/documents/${filename}`, {
+        method: 'DELETE'
     });
     
     if (!response.ok) {

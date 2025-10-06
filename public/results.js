@@ -39,14 +39,13 @@ async function loadResultsImages() {
         // Override with API data if available
         if (results && results.length > 0) {
             results.forEach(result => {
-                // Use the new API endpoint to serve images from database
-                const imageUrl = `/api/results/${result.id}/image`;
+                // Use direct file path from assets folder
                 formattedResults[result.category] = {
                     title: getCategoryName(result.category),
-                    image: imageUrl,
-                    description: result.description,
+                    image: result.image_path,
+                    description: result.description || `${result.category} results for ${result.year}`,
                     year: result.year,
-                    id: result.id // Store ID for modal functionality
+                    filename: result.filename
                 };
             });
         }

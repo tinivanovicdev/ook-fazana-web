@@ -176,12 +176,24 @@ async function downloadDocument(docId, filename) {
         // Show loading state
         showDownloadLoading(docId);
         
-        // In production, this will call the backend API
-        // const response = await fetch(`/api/documents/${docId}/download`);
-        // const blob = await response.blob();
+        // Call the backend API to get the file
+        const response = await fetch(`/api/documents/${docId}/file`);
         
-        // For now, simulate download with static file
-        simulateDownload(filename);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const blob = await response.blob();
+        
+        // Create download link and trigger download
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
         
         // Hide loading state
         hideDownloadLoading(docId);

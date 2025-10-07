@@ -684,6 +684,31 @@ app.get('/api/health', (req, res) => {
 async function startServer() {
     await connectDatabase();
     
+    // Membership form endpoint (placeholder for Resend integration)
+    app.post('/api/membership', async (req, res) => {
+        try {
+            const membershipData = req.body;
+            
+            // Log the membership data for now
+            console.log('New membership application:', membershipData);
+            
+            // Here you would integrate with Resend to send the email
+            // For now, just return success
+            
+            res.json({
+                success: true,
+                message: 'Membership application received successfully'
+            });
+            
+        } catch (error) {
+            console.error('Membership form error:', error);
+            res.status(500).json({ 
+                error: 'Failed to process membership application',
+                details: error.message 
+            });
+        }
+    });
+
     app.listen(PORT, () => {
         console.log(`Server running on port ${PORT}`);
         console.log('Database mode - MySQL connection established');

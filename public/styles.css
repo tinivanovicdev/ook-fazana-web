@@ -722,6 +722,215 @@ body {
     flex-shrink: 0;
 }
 
+/* Membership Form Styles */
+.membership-section {
+    padding: 4rem 0;
+    background-color: #f8f9fa;
+}
+
+.membership-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.membership-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.membership-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #2061a6;
+    margin: 0 0 1rem 0;
+}
+
+.membership-header p {
+    font-size: 1.2rem;
+    color: #666;
+    margin: 0;
+}
+
+.membership-form {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 0.75rem;
+    border: 2px solid #e1e5e9;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+    background-color: #f8f9fa;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #2061a6;
+    background-color: white;
+}
+
+.form-group input:disabled,
+.form-group select:disabled {
+    background-color: #e9ecef;
+    color: #6c757d;
+    cursor: not-allowed;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-group textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.form-checkboxes {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    border: 1px solid #e1e5e9;
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.checkbox-group:last-child {
+    margin-bottom: 0;
+}
+
+.checkbox-group input[type="checkbox"] {
+    margin-right: 0.75rem;
+    margin-top: 0.2rem;
+    width: 18px;
+    height: 18px;
+    accent-color: #2061a6;
+}
+
+.checkbox-group label {
+    font-size: 0.95rem;
+    line-height: 1.4;
+    margin-bottom: 0;
+}
+
+.checkbox-group .link {
+    color: #2061a6;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.checkbox-group .link:hover {
+    color: #1a4d8c;
+}
+
+.form-submit {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.submit-btn {
+    background-color: #2061a6;
+    color: white;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    min-width: 150px;
+}
+
+.submit-btn:hover:not(:disabled) {
+    background-color: #1a4d8c;
+}
+
+.submit-btn:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+}
+
+.form-message {
+    padding: 1rem;
+    border-radius: 6px;
+    margin: 1rem 0;
+    text-align: center;
+    font-weight: 600;
+}
+
+.form-message-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.form-message-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Responsive Design for Membership Form */
+@media (max-width: 768px) {
+    .membership-header h1 {
+        font-size: 2rem;
+    }
+    
+    .membership-header p {
+        font-size: 1rem;
+    }
+    
+    .membership-form {
+        padding: 1.5rem;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .form-checkboxes {
+        padding: 1rem;
+    }
+    
+    .submit-btn {
+        width: 100%;
+        padding: 1rem;
+    }
+}
+
 /* Results Page Styles */
 .results-section {
     padding: 3rem 0;

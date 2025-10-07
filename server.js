@@ -8,7 +8,11 @@ const mysql = require('mysql2/promise');
 const path = require('path');
 const fs = require('fs');
 const rateLimit = require('express-rate-limit');
+const { Resend } = require('resend');
 require('dotenv').config();
+
+// Initialize Resend
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -684,20 +688,78 @@ app.get('/api/health', (req, res) => {
 async function startServer() {
     await connectDatabase();
     
-    // Membership form endpoint (placeholder for Resend integration)
+    // Membership form endpoint with Resend email integration
     app.post('/api/membership', async (req, res) => {
         try {
             const membershipData = req.body;
             
-            // Log the membership data for now
-            console.log('New membership application:', membershipData);
+            console.log('New membership application received:', membershipData);
             
-            // Here you would integrate with Resend to send the email
-            // For now, just return success
+            // Format the program name for display
+            const programNames = {
+                'skola-odbojke': 'Škola odbojke',
+                'mini-odbojka': 'Mini odbojka',
+                'mlade-kadetkinje': 'Mlađe kadetkinje',
+                'kadetkinje': 'Kadetkinje',
+                'juniorice': 'Juniorice',
+                'seniorice': 'Seniorice'
+            };
+            
+            const programDisplay = programNames[membershipData.program] || membershipData.program;
+            
+            // Format the email content
+            const emailHtml = `
+                <h2>Nova prijava za članstvo - OOK FAŽANA</h2>
+                
+                <h3>Podaci o programu</h3>
+                <p><strong>Program:</strong> ${programDisplay}</p>
+                
+                <h3>Podaci o članu</h3>
+                <p><strong>Prezime i ime:</strong> ${membershipData['prezime-ime']}</p>
+                <p><strong>Ime i prezime roditelja:</strong> ${membershipData['ime-prezime-roditelja']}</p>
+                <p><strong>Datum rođenja:</strong> ${membershipData['datum-rodjenja']}</p>
+                <p><strong>Datum upisa:</strong> ${membershipData['datum-upisa']}</p>
+                <p><strong>Spol:</strong> ${membershipData.spol === 'musko' ? 'Muško' : 'Žensko'}</p>
+                <p><strong>Državljanstvo:</strong> ${membershipData.drzavljanstvo === 'hrvatsko' ? 'Hrvatsko' : 'Strano'}</p>
+                
+                <h3>Kontakt podaci</h3>
+                <p><strong>OIB:</strong> ${membershipData.oib}</p>
+                <p><strong>Adresa:</strong> ${membershipData.adresa}</p>
+                <p><strong>Telefon:</strong> ${membershipData.telefon}</p>
+                <p><strong>E-mail:</strong> ${membershipData.email}</p>
+                
+                ${membershipData.napomena ? `
+                <h3>Napomena</h3>
+                <p>${membershipData.napomena}</p>
+                ` : ''}
+                
+                <hr>
+                <p><small>Ova prijava je poslana putem web stranice OOK FAŽANA</small></p>
+            `;
+            
+            // Send email using Resend
+            const { data, error } = await resend.emails.send({
+                from: process.env.RESEND_FROM_EMAIL || 'OOK FAŽANA <onboarding@resend.dev>',
+                to: process.env.MEMBERSHIP_EMAIL || 'info@ookfazana.hr',
+                subject: `Nova prijava za članstvo - ${membershipData['prezime-ime']}`,
+                html: emailHtml,
+                replyTo: membershipData.email
+            });
+            
+            if (error) {
+                console.error('Resend email error:', error);
+                return res.status(500).json({ 
+                    error: 'Failed to send membership email',
+                    details: error.message 
+                });
+            }
+            
+            console.log('Membership email sent successfully:', data);
             
             res.json({
                 success: true,
-                message: 'Membership application received successfully'
+                message: 'Membership application received successfully',
+                emailId: data.id
             });
             
         } catch (error) {

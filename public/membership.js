@@ -5,18 +5,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function initMembershipForm() {
     const form = document.getElementById('membershipForm');
-    const programSelect = document.getElementById('program');
-    const grupaSelect = document.getElementById('grupa');
     const datumUpisaInput = document.getElementById('datum-upisa');
 
     // Set today's date as default enrollment date
     const today = new Date().toISOString().split('T')[0];
     datumUpisaInput.value = today;
-
-    // Program change handler
-    programSelect.addEventListener('change', function() {
-        updateGrupaOptions(this.value);
-    });
 
     // Form submission handler
     form.addEventListener('submit', function(e) {
@@ -28,54 +21,6 @@ function initMembershipForm() {
     const oibInput = document.getElementById('oib');
     oibInput.addEventListener('input', function() {
         validateOIB(this);
-    });
-}
-
-function updateGrupaOptions(program) {
-    const grupaSelect = document.getElementById('grupa');
-    grupaSelect.innerHTML = '<option value="">Odaberite grupu</option>';
-
-    if (!program) {
-        grupaSelect.disabled = true;
-        return;
-    }
-
-    grupaSelect.disabled = false;
-
-    // Define groups for each program
-    const groups = {
-        'skola-odbojke': [
-            { value: 'skola-1', text: 'Škola odbojke - Grupa 1' },
-            { value: 'skola-2', text: 'Škola odbojke - Grupa 2' }
-        ],
-        'mini-odbojka': [
-            { value: 'mini-1', text: 'Mini odbojka - Grupa 1' },
-            { value: 'mini-2', text: 'Mini odbojka - Grupa 2' }
-        ],
-        'mlade-kadetkinje': [
-            { value: 'mlade-kadetkinje-1', text: 'Mlađe kadetkinje - Grupa 1' },
-            { value: 'mlade-kadetkinje-2', text: 'Mlađe kadetkinje - Grupa 2' }
-        ],
-        'kadetkinje': [
-            { value: 'kadetkinje-1', text: 'Kadetkinje - Grupa 1' },
-            { value: 'kadetkinje-2', text: 'Kadetkinje - Grupa 2' }
-        ],
-        'juniorice': [
-            { value: 'juniorice-1', text: 'Juniorice - Grupa 1' },
-            { value: 'juniorice-2', text: 'Juniorice - Grupa 2' }
-        ],
-        'seniorice': [
-            { value: 'seniorice-1', text: 'Seniorice - Grupa 1' },
-            { value: 'seniorice-2', text: 'Seniorice - Grupa 2' }
-        ]
-    };
-
-    const programGroups = groups[program] || [];
-    programGroups.forEach(group => {
-        const option = document.createElement('option');
-        option.value = group.value;
-        option.textContent = group.text;
-        grupaSelect.appendChild(option);
     });
 }
 
@@ -142,9 +87,6 @@ async function handleFormSubmission() {
             form.reset();
             // Reset enrollment date to today
             document.getElementById('datum-upisa').value = new Date().toISOString().split('T')[0];
-            // Reset grupa select
-            document.getElementById('grupa').disabled = true;
-            document.getElementById('grupa').innerHTML = '<option value="">Prvo odaberite program</option>';
         } else {
             throw new Error('Greška pri slanju zahtjeva');
         }

@@ -699,10 +699,8 @@ async function startServer() {
             const programNames = {
                 'skola-odbojke': 'Škola odbojke',
                 'mini-odbojka': 'Mini odbojka',
-                'mlade-kadetkinje': 'Mlađe kadetkinje',
-                'kadetkinje': 'Kadetkinje',
-                'juniorice': 'Juniorice',
-                'seniorice': 'Seniorice'
+                'djevojcice': 'Djevojčice',
+                'mlade-kadetkinje': 'Mlade kadetkinje'
             };
             
             const programDisplay = programNames[membershipData.program] || membershipData.program;

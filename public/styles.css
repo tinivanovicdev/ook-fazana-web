@@ -17,6 +17,10 @@ body {
     background-color: #f8f9fa;
 }
 
+.lowercase {
+    text-transform: lowercase;
+}
+
 .container {
     max-width: 1200px;
     margin: 0 auto;

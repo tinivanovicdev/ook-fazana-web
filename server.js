@@ -695,29 +695,15 @@ async function startServer() {
             
             console.log('New membership application received:', membershipData);
             
-            // Format the program name for display
-            const programNames = {
-                'skola-odbojke': 'Škola odbojke',
-                'mini-odbojka': 'Mini odbojka',
-                'djevojcice': 'Djevojčice',
-                'mlade-kadetkinje': 'Mlade kadetkinje'
-            };
-            
-            const programDisplay = programNames[membershipData.program] || membershipData.program;
-            
             // Format the email content
             const emailHtml = `
                 <h2>Nova prijava za članstvo - OOK FAŽANA</h2>
                 
-                <h3>Podaci o programu</h3>
-                <p><strong>Program:</strong> ${programDisplay}</p>
-                
                 <h3>Podaci o članu</h3>
-                <p><strong>Prezime i ime:</strong> ${membershipData['prezime-ime']}</p>
+                <p><strong>Ime i prezime:</strong> ${membershipData['prezime-ime']}</p>
                 <p><strong>Ime i prezime roditelja:</strong> ${membershipData['ime-prezime-roditelja']}</p>
                 <p><strong>Datum rođenja:</strong> ${membershipData['datum-rodjenja']}</p>
                 <p><strong>Datum upisa:</strong> ${membershipData['datum-upisa']}</p>
-                <p><strong>Spol:</strong> ${membershipData.spol === 'musko' ? 'Muško' : 'Žensko'}</p>
                 <p><strong>Državljanstvo:</strong> ${membershipData.drzavljanstvo === 'hrvatsko' ? 'Hrvatsko' : 'Strano'}</p>
                 
                 <h3>Kontakt podaci</h3>

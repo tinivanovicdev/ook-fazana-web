@@ -1071,6 +1071,59 @@ body {
     }
 }
 
+/* Page Hero Title Section */
+.page-hero {
+    position: relative;
+    height: 200px;
+    width: 100%;
+    background-image: url('assets/logo.svg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.page-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.85);
+    z-index: 1;
+}
+
+.page-hero-title {
+    position: relative;
+    z-index: 2;
+    font-size: 3rem;
+    font-weight: 700;
+    color: #2d2d2d;
+    text-align: start;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    width: 100%;
+    max-width: 1200px;
+    padding: 0 2rem;
+}
+
+/* Responsive Design for Page Hero */
+@media (max-width: 768px) {
+    .page-hero {
+        height: 200px;
+    }
+    
+    .page-hero-title {
+        font-size: 2rem;
+        letter-spacing: 1px;
+    }
+}
+
 /* Results Page Styles */
 .results-section {
     padding: 3rem 0;

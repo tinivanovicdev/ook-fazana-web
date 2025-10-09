@@ -44,6 +44,17 @@ body {
     display: block;
 }
 
+/* Social Links */
+.social-link {
+    display: inline-flex;
+    align-items: center;
+    transition: opacity 0.3s ease;
+}
+
+.social-link:hover {
+    opacity: 0.7;
+}
+
 .container {
     max-width: 1200px;
     margin: 0 auto;
@@ -435,7 +446,7 @@ body {
 }
 
 .categories-list li::before {
-    content: "■";
+    content: "●";
     color: #2d2d2d;
     position: absolute;
     left: 0;

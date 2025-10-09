@@ -21,6 +21,10 @@ body {
     text-transform: lowercase;
 }
 
+.normal-case {
+    text-transform: none !important;
+}
+
 /* Friend Links */
 .friend-link {
     color: #2d2d2d;

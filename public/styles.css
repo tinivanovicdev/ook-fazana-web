@@ -21,6 +21,17 @@ body {
     text-transform: lowercase;
 }
 
+/* Friend Links */
+.friend-link {
+    color: #2d2d2d;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.friend-link:hover {
+    color: #2061a6;
+}
+
 .container {
     max-width: 1200px;
     margin: 0 auto;

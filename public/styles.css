@@ -32,6 +32,18 @@ body {
     color: #2061a6;
 }
 
+/* Barcode Image */
+.barcode-container {
+    margin-top: 1.5rem;
+}
+
+.barcode-image {
+    max-width: 300px;
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
 .container {
     max-width: 1200px;
     margin: 0 auto;

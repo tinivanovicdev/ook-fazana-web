@@ -20,13 +20,13 @@
                 </div>
 
                 <!-- Desktop Navigation -->
-                <nav class="nav">
+                <nav class="desktop-nav">
                     <ul class="nav-list">
                         <li class="nav-item">
-                            <a href="index.html" class="nav-link">Home</a>
+                            <a href="#" class="nav-link">Home</a>
                         </li>
                         <li class="nav-item dropdown">
-                            <a href="#" class="nav-link">
+                            <a href="#" class="nav-link" data-dropdown="info">
                                 Info
                                 <svg class="dropdown-arrow" width="12" height="8" viewBox="0 0 12 8">
                                     <path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="2" fill="none" />
@@ -42,7 +42,7 @@
                             <a href="contact.html" class="nav-link">Kontakt</a>
                         </li>
                         <li class="nav-item dropdown">
-                            <a href="#" class="nav-link">
+                            <a href="#" class="nav-link" data-dropdown="rezultati">
                                 Rezultati
                                 <svg class="dropdown-arrow" width="12" height="8" viewBox="0 0 12 8">
                                     <path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="2" fill="none" />
@@ -58,66 +58,66 @@
                             <a href="dokumenti.html" class="nav-link">Dokumenti</a>
                         </li>
                         <li class="nav-item">
-                            <a href="uclani-se.html" class="nav-link active">Učlani se</a>
+                            <a href="uclani-se.html" class="nav-link">Učlani se</a>
                         </li>
                         <li class="nav-item" style="display: none;" id="adminLink">
-                            <a href="cms.html" class="nav-link">Admin</a>
+                            <a href="cms.html" class="nav-link">CMS</a>
                         </li>
                     </ul>
                 </nav>
 
                 <!-- Mobile Menu Button -->
-                <button class="mobile-menu-btn" aria-label="Open menu">
-                    <span></span>
-                    <span></span>
-                    <span></span>
+                <button class="mobile-menu-btn" aria-label="Toggle menu">
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
                 </button>
             </div>
-        </div>
 
-        <!-- Mobile Navigation -->
-        <nav class="mobile-nav">
-            <ul class="mobile-nav-list">
-                <li class="mobile-nav-item">
-                    <a href="index.html" class="mobile-nav-link">Home</a>
-                </li>
-                <li class="mobile-nav-item dropdown">
-                    <a href="#" class="mobile-nav-link">
-                        Info
-                        <svg class="dropdown-arrow" width="12" height="8" viewBox="0 0 12 8">
-                            <path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="2" fill="none" />
-                        </svg>
-                    </a>
-                    <ul class="mobile-dropdown-menu">
-                        <li><a href="treneri.html" class="mobile-dropdown-link">Treneri</a></li>
-                        <li><a href="uprava.html" class="mobile-dropdown-link">Uprava</a></li>
-                        <li><a href="prijatelji.html" class="mobile-dropdown-link">Prijatelji</a></li>
-                    </ul>
-                </li>
-                <li class="mobile-nav-item">
-                    <a href="contact.html" class="mobile-nav-link">Kontakt</a>
-                </li>
-                <li class="mobile-nav-item dropdown">
-                    <a href="#" class="mobile-nav-link">
-                        Rezultati
-                        <svg class="dropdown-arrow" width="12" height="8" viewBox="0 0 12 8">
-                            <path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="2" fill="none" />
-                        </svg>
-                    </a>
-                    <ul class="mobile-dropdown-menu">
-                        <li><a href="rezultati-2024.html" class="mobile-dropdown-link">2024/25</a></li>
-                        <li><a href="rezultati-2023.html" class="mobile-dropdown-link">2023/24</a></li>
-                        <li><a href="rezultati-2022.html" class="mobile-dropdown-link">2022/23</a></li>
-                    </ul>
-                </li>
-                <li class="mobile-nav-item">
-                    <a href="dokumenti.html" class="mobile-nav-link">Dokumenti</a>
-                </li>
-                <li class="mobile-nav-item">
-                    <a href="uclani-se.html" class="mobile-nav-link active">Učlani se</a>
-                </li>
-            </ul>
-        </nav>
+            <!-- Mobile Navigation -->
+            <nav class="mobile-nav">
+                <ul class="mobile-nav-list">
+                    <li class="mobile-nav-item">
+                        <a href="#" class="mobile-nav-link">Home</a>
+                    </li>
+                    <li class="mobile-nav-item dropdown">
+                        <a href="#" class="mobile-nav-link" data-mobile-dropdown="info">
+                            Info
+                            <svg class="dropdown-arrow" width="12" height="8" viewBox="0 0 12 8">
+                                <path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="2" fill="none" />
+                            </svg>
+                        </a>
+                        <ul class="mobile-dropdown-menu">
+                            <li><a href="treneri.html" class="mobile-dropdown-link">Treneri</a></li>
+                            <li><a href="uprava.html" class="mobile-dropdown-link">Uprava</a></li>
+                            <li><a href="prijatelji.html" class="mobile-dropdown-link">Prijatelji</a></li>
+                        </ul>
+                    </li>
+                    <li class="mobile-nav-item">
+                        <a href="contact.html" class="mobile-nav-link">Kontakt</a>
+                    </li>
+                    <li class="mobile-nav-item dropdown">
+                        <a href="#" class="mobile-nav-link" data-mobile-dropdown="rezultati">
+                            Rezultati
+                            <svg class="dropdown-arrow" width="12" height="8" viewBox="0 0 12 8">
+                                <path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="2" fill="none" />
+                            </svg>
+                        </a>
+                        <ul class="mobile-dropdown-menu">
+                            <li><a href="rezultati-2024.html" class="mobile-dropdown-link">2024/25</a></li>
+                            <li><a href="rezultati-2023.html" class="mobile-dropdown-link">2023/24</a></li>
+                            <li><a href="rezultati-2022.html" class="mobile-dropdown-link">2022/23</a></li>
+                        </ul>
+                    </li>
+                    <li class="mobile-nav-item">
+                        <a href="dokumenti.html" class="mobile-nav-link">Dokumenti</a>
+                    </li>
+                    <li class="mobile-nav-item">
+                        <a href="uclani-se.html" class="mobile-nav-link">Učlani se</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
     </header>
 
     <main class="main-content">
@@ -202,13 +202,15 @@
                             <div class="checkbox-group">
                                 <input type="checkbox" id="uvjeti-clanstva" name="uvjeti-clanstva" required>
                                 <label for="uvjeti-clanstva">
-                                    Slažem se s <a href="uvjeti-clanstva.html" class="link" target="_blank">uvjetima članstva</a>
+                                    Slažem se s <a href="uvjeti-clanstva.html" class="link" target="_blank">uvjetima
+                                        članstva</a>
                                 </label>
                             </div>
                             <div class="checkbox-group">
                                 <input type="checkbox" id="pravila-privatnosti" name="pravila-privatnosti" required>
                                 <label for="pravila-privatnosti">
-                                    Slažem se s <a href="pravila-privatnosti.html" class="link" target="_blank">pravilima privatnosti</a>
+                                    Slažem se s <a href="pravila-privatnosti.html" class="link"
+                                        target="_blank">pravilima privatnosti</a>
                                 </label>
                             </div>
                         </div>

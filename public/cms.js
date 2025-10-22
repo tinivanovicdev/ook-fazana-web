@@ -9,7 +9,7 @@ const CMS_CONFIG = {
     api: {
         results: '/api/results',
         documents: '/api/documents',
-        auth: '/api/auth/login'
+        auth: '/api/login'
     }
 };
 

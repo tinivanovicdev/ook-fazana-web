@@ -310,7 +310,7 @@ app.post('/api/login', async (req, res) => {
         );
 
         if (rows.length === 0) {
-            return res.status(401).json({ error: 'Invalid credentials' });
+            return res.status(401).json({ error: 'No user found with provided credentials' });
         }
 
         const user = rows[0];

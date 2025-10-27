@@ -139,7 +139,6 @@ function createDocumentElement(doc) {
         </div>
         <div class="document-info">
             <h4>${doc.title}</h4>
-            <p class="document-date">Datum: ${formatDate(doc.date)}</p>
         </div>
         <div class="document-actions">
             <a href="${doc.fileUrl}" class="download-btn" data-filename="${doc.filename}" data-id="${doc.id}" download>

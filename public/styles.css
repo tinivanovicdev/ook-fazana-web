@@ -36,6 +36,15 @@ body {
     color: #2061a6;
 }
 
+.friend-item {
+    display: flex;
+    align-items: start;
+    flex-direction: row;
+    gap: 12px;
+    margin-bottom: 1rem;
+    align-items: center;
+}
+
 /* Barcode Image */
 .barcode-container {
     margin-top: 1.5rem;

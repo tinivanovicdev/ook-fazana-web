@@ -45,9 +45,9 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
-// Body parsing middleware
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+// Body parsing middleware - reduced limits to save memory
+app.use(express.json({ limit: '5mb' }));
+app.use(express.urlencoded({ extended: true, limit: '5mb' }));
 
 // Static files
 app.use(express.static('public'));
@@ -86,10 +86,11 @@ async function connectDatabase() {
         }
         
         // Use a connection pool to avoid closed connection issues
+        // Reduced connection limit to save memory (5 connections is sufficient for small-medium traffic)
         db = await mysql.createPool({
             ...connectionConfig,
             waitForConnections: true,
-            connectionLimit: 10,
+            connectionLimit: 5,
             queueLimit: 0,
             enableKeepAlive: true,
             keepAliveInitialDelay: 0
@@ -254,7 +255,7 @@ const storage = multer.memoryStorage();
 const upload = multer({ 
     storage: storage,
     limits: {
-        fileSize: 10 * 1024 * 1024 // 10MB limit
+        fileSize: 5 * 1024 * 1024 // 5MB limit (reduced to save memory)
     },
     fileFilter: (req, file, cb) => {
         if (file.fieldname === 'image') {
@@ -341,7 +342,6 @@ app.post('/api/login', async (req, res) => {
 app.get('/api/results', async (req, res) => {
     try {
         const [rows] = await db.execute('SELECT id, category, year, image_filename, image_mimetype, description, created_at, updated_at FROM results ORDER BY year DESC, category');
-        console.log(`GET /api/results returned ${rows.length} records:`, rows.map(r => ({id: r.id, category: r.category, year: r.year})));
         res.json(rows);
     } catch (error) {
         console.error('Database error in GET /api/results:', error);
@@ -353,43 +353,28 @@ app.get('/api/results', async (req, res) => {
 app.get('/api/results/:id/image', async (req, res) => {
     try {
         const { id } = req.params;
-        console.log(`=== BLOB ENDPOINT HIT ===`);
-        console.log(`BLOB endpoint called for result ID: ${id}`);
-        console.log(`Request URL: ${req.url}`);
-        console.log(`Request method: ${req.method}`);
         
         const [rows] = await db.execute(
             'SELECT image_data, image_mimetype FROM results WHERE id = ?',
             [id]
         );
         
-        console.log(`Query returned ${rows.length} rows for ID ${id}`);
-        if (rows.length > 0) {
-            console.log(`Row data:`, { 
-                id: id, 
-                hasImageData: !!rows[0].image_data, 
-                mimetype: rows[0].image_mimetype,
-                dataType: typeof rows[0].image_data
-            });
-        }
-        
         if (rows.length === 0) {
-            console.log(`No result found for ID ${id}`);
             return res.status(404).json({ error: 'Result not found' });
         }
         
         const { image_data, image_mimetype } = rows[0];
         
         if (!image_data) {
-            console.log(`No image data found for ID ${id}`);
             return res.status(404).json({ error: 'Image data not found' });
         }
         
-        console.log(`Serving image data for ID ${id}, mimetype: ${image_mimetype}, data size: ${image_data ? image_data.length : 'null'}`);
-        
         res.set('Content-Type', image_mimetype);
+        res.set('Cache-Control', 'public, max-age=31536000'); // Cache for 1 year
         res.send(image_data);
-        console.log(`=== BLOB ENDPOINT COMPLETED ===`);
+        
+        // Clear reference to help GC
+        rows[0] = null;
     } catch (error) {
         console.error('Database error in BLOB endpoint:', error);
         res.status(500).json({ error: 'Database error', details: error.message });
@@ -413,6 +398,9 @@ app.post('/api/results', authenticateToken, upload.single('image'), async (req, 
             'INSERT INTO results (category, year, image_data, image_filename, image_mimetype, description) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE image_data = VALUES(image_data), image_filename = VALUES(image_filename), image_mimetype = VALUES(image_mimetype), description = VALUES(description), updated_at = CURRENT_TIMESTAMP',
             [category, year, req.file.buffer, req.file.originalname, req.file.mimetype, description]
         );
+        
+        // Clear file buffer from memory after saving
+        req.file.buffer = null;
         
         res.json({
             category,
@@ -543,29 +531,13 @@ app.post('/api/documents', authenticateToken, upload.single('file'), async (req,
         }
 
         // Store BLOB data in database
-        console.log(`Uploading document: ${req.file.originalname}`);
-        console.log(`File size: ${req.file.buffer.length} bytes`);
-        console.log(`MIME type: ${req.file.mimetype}`);
-        console.log(`Buffer type: ${typeof req.file.buffer}, is Buffer: ${Buffer.isBuffer(req.file.buffer)}`);
-        
         const [result] = await db.execute(
             'INSERT INTO documents (title, category, file_data, file_filename, file_mimetype, description) VALUES (?, ?, ?, ?, ?, ?)',
             [title, category || 'general', req.file.buffer, req.file.originalname, req.file.mimetype, description]
         );
         
-        // Verify the data was stored correctly
-        const [verifyRows] = await db.execute(
-            'SELECT LENGTH(file_data) as data_length FROM documents WHERE id = ?',
-            [result.insertId]
-        );
-        
-        if (verifyRows.length > 0) {
-            const storedLength = verifyRows[0].data_length;
-            console.log(`Uploaded: ${req.file.buffer.length} bytes, Stored: ${storedLength} bytes`);
-            if (storedLength !== req.file.buffer.length) {
-                console.error(`DATA CORRUPTION: Upload size (${req.file.buffer.length}) != Stored size (${storedLength})`);
-            }
-        }
+        // Clear file buffer from memory after saving
+        req.file.buffer = null;
         
         res.json({
             id: result.insertId,
@@ -630,23 +602,13 @@ app.get('/api/documents/:id/file', async (req, res) => {
         
         const { file_data, file_mimetype, file_filename } = rows[0];
         
-        console.log(`Downloading document ID: ${id}`);
-        console.log(`Filename: ${file_filename}`);
-        console.log(`MIME type: ${file_mimetype}`);
-        console.log(`Data size: ${file_data ? file_data.length : 'null'} bytes`);
-        console.log(`Data type: ${typeof file_data}, is Buffer: ${Buffer.isBuffer(file_data)}`);
-        
-        // Additional debugging for BLOB data
-        if (file_data) {
-            console.log(`First 20 bytes (hex): ${file_data.slice(0, 20).toString('hex')}`);
-            console.log(`First 20 bytes (ascii): ${file_data.slice(0, 20).toString('ascii')}`);
-        } else {
-            console.log('file_data is null or undefined');
-        }
-        
         res.set('Content-Type', file_mimetype);
         res.set('Content-Disposition', `attachment; filename="${file_filename}"`);
+        res.set('Cache-Control', 'public, max-age=31536000'); // Cache for 1 year
         res.send(file_data);
+        
+        // Clear reference to help GC
+        rows[0] = null;
     } catch (error) {
         console.error('Database error:', error);
         res.status(500).json({ error: 'Database error' });
@@ -693,8 +655,6 @@ async function startServer() {
         try {
             const membershipData = req.body;
             
-            console.log('New membership application received:', membershipData);
-            
             // Format the email content
             const emailHtml = `
                 <h2>Nova prijava za članstvo - OOK FAŽANA</h2>
@@ -737,8 +697,6 @@ async function startServer() {
                     details: error.message 
                 });
             }
-            
-            console.log('Membership email sent successfully:', data);
             
             res.json({
                 success: true,
